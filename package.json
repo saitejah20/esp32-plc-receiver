@@ -1,7 +1,7 @@
 {
-  "name": "esp32-plc-receiver",
+  "name": "mini-thingspeak",
   "version": "1.0.0",
-  "description": "Receives ESP32 PLC panel data and serves a live dashboard reachable from any network",
+  "description": "Self-hosted mini ThingSpeak - IoT channel data logging with live dashboards",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -10,6 +10,9 @@
     "node": ">=18"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "express": "^4.19.2",
+    "express-session": "^1.19.0"
   }
 }
