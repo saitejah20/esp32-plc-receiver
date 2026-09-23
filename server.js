@@ -46,21 +46,39 @@ function escapeHtml(s) {
 // ---------------- Signup (public, no auth needed) ----------------
 app.get('/signup', (req, res) => {
   res.send(`<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Sign Up</title>
-<style>body{font-family:system-ui,sans-serif;background:#14181d;color:#e7ebef;padding:40px;text-align:center;}
-input,button{padding:10px;margin-top:10px;border-radius:6px;border:1px solid #2f3944;background:#232a32;color:#e7ebef;width:220px;}
-button{background:#f0a020;color:#1a1200;font-weight:600;cursor:pointer;border:none;}
-.error{color:#e24b4a;font-size:13px;margin-top:10px;} a{color:#2dd4bf;}</style></head>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign Up - PLC Remote Panel</title>
+<style>
+  :root{--bg:#14181d;--panel:#1c2229;--panel2:#232a32;--line:#2f3944;--text:#e7ebef;--sub:#8a97a3;--amber:#f0a020;--teal:#2dd4bf;--danger:#e24b4a;}
+  *{box-sizing:border-box;}
+  body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:32px;width:100%;max-width:360px;}
+  .badge{font-family:monospace;font-size:11px;letter-spacing:.12em;color:var(--teal);text-transform:uppercase;text-align:center;margin-bottom:6px;}
+  h2{text-align:center;margin:0 0 8px;font-size:22px;}
+  .sub{color:var(--sub);font-size:12px;text-align:center;line-height:1.5;margin-bottom:24px;}
+  label{display:block;font-size:11px;color:var(--sub);margin:12px 0 4px;}
+  input{width:100%;padding:10px;border-radius:6px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:14px;}
+  input:focus{outline:1px solid var(--teal);}
+  button{width:100%;margin-top:20px;padding:11px;border-radius:6px;border:none;background:var(--amber);color:#1a1200;font-weight:600;font-size:14px;cursor:pointer;}
+  button:hover{filter:brightness(1.1);}
+  .error{color:var(--danger);font-size:12px;margin-top:12px;text-align:center;}
+  .footlink{text-align:center;font-size:12px;color:var(--sub);margin-top:20px;}
+  a{color:var(--teal);text-decoration:none;}
+</style></head>
 <body>
-  <h2>Create Your Account</h2>
-  <p>This username/password becomes your login here AND your ESP32's<br>"Remote User"/"Remote Pass" in the Panel Builder tool.</p>
-  <form method="POST" action="/signup">
-    <div><input name="username" placeholder="Username" required></div>
-    <div><input name="password" type="password" placeholder="Password" required></div>
-    <button type="submit">Sign Up</button>
-  </form>
-  ${req.query.error ? `<div class="error">${escapeHtml(req.query.error)}</div>` : ''}
-  <p style="margin-top:20px;">Already have an account? Just visit <a href="/">the dashboard</a> and log in when prompted.</p>
+  <div class="card">
+    <div class="badge">PLC Remote Panel</div>
+    <h2>Create Your Account</h2>
+    <p class="sub">This username/password becomes both your dashboard login and your ESP32's "Remote User"/"Remote Pass" in the Panel Builder tool.</p>
+    <form method="POST" action="/signup">
+      <label>Username</label>
+      <input name="username" required autofocus>
+      <label>Password</label>
+      <input name="password" type="password" required>
+      <button type="submit">Sign Up</button>
+    </form>
+    ${req.query.error ? `<div class="error">${escapeHtml(req.query.error)}</div>` : ''}
+    <div class="footlink">Already have an account? <a href="/dashboard">Log in</a></div>
+  </div>
 </body></html>`);
 });
 
@@ -76,8 +94,47 @@ app.post('/signup', async (req, res) => {
   res.send(`<!DOCTYPE html><html><body style="font-family:system-ui,sans-serif;background:#14181d;color:#e7ebef;padding:40px;text-align:center;">
   <h2>Account created!</h2>
   <p>Username: <b>${escapeHtml(username)}</b></p>
-  <p>Use this same username/password in the Panel Builder's "Remote User"/"Remote Pass" fields, and to log in to <a href="/" style="color:#2dd4bf;">your dashboard</a>.</p>
+  <p>Use this same username/password in the Panel Builder's "Remote User"/"Remote Pass" fields, and to log in to <a href="/dashboard" style="color:#2dd4bf;">your dashboard</a>.</p>
   </body></html>`);
+});
+
+// ---------------- Public landing page (no auth) ----------------
+app.get('/', (req, res) => {
+  res.send(`<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLC Remote Panel</title>
+<style>
+  :root{--bg:#14181d;--panel:#1c2229;--panel2:#232a32;--line:#2f3944;--text:#e7ebef;--sub:#8a97a3;--amber:#f0a020;--teal:#2dd4bf;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
+  .badge{font-family:monospace;font-size:11px;letter-spacing:.15em;color:var(--teal);text-transform:uppercase;margin-bottom:10px;}
+  h1{font-size:clamp(28px,5vw,44px);margin:0 0 12px;background:linear-gradient(90deg,var(--amber),var(--teal));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .tagline{color:var(--sub);font-size:15px;max-width:480px;margin:0 0 32px;line-height:1.5;}
+  .features{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;max-width:640px;margin-bottom:36px;}
+  .feature{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 18px;font-size:12px;color:var(--sub);width:140px;}
+  .feature .ico{font-size:20px;margin-bottom:6px;display:block;}
+  .actions{display:flex;gap:14px;}
+  .btn{padding:12px 28px;border-radius:8px;font-weight:600;font-size:14px;text-decoration:none;cursor:pointer;border:none;transition:filter .15s;}
+  .btn:hover{filter:brightness(1.12);}
+  .btn-primary{background:var(--amber);color:#1a1200;}
+  .btn-secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line);}
+  .footnote{margin-top:40px;font-size:11px;color:#5b6672;}
+</style></head>
+<body>
+  <div class="badge">Self-Hosted &middot; Multi-User</div>
+  <h1>PLC Remote Panel</h1>
+  <p class="tagline">Monitor and control your PLC from anywhere in the world. Each account gets its own private, styled SCADA dashboard fed live by your ESP32.</p>
+  <div class="features">
+    <div class="feature"><span class="ico">&#128225;</span>Live data from your ESP32, updated every few seconds</div>
+    <div class="feature"><span class="ico">&#128737;</span>Private per-account dashboards, nobody sees your panel but you</div>
+    <div class="feature"><span class="ico">&#128268;</span>Remote switches &amp; setpoints, not just read-only values</div>
+  </div>
+  <div class="actions">
+    <a class="btn btn-primary" href="/signup">Sign Up</a>
+    <a class="btn btn-secondary" href="/dashboard">Log In</a>
+  </div>
+  <div class="footnote">Logging in will prompt your browser for the username/password you signed up with.</div>
+</body></html>`);
 });
 
 // ---------------- Basic Auth (protects everything else, identifies which user) ----------------
@@ -157,7 +214,7 @@ button{background:#f0a020;color:#1a1200;font-weight:600;cursor:pointer;border:no
   <input type="file" id="file" accept=".json"><br>
   <button onclick="upload()">Upload</button>
   <div id="msg"></div>
-  <p><a href="/">&larr; Back to dashboard</a></p>
+  <p><a href="/dashboard">&larr; Back to dashboard</a></p>
 <script>
 async function upload(){
   const f = document.getElementById('file').files[0];
@@ -165,7 +222,7 @@ async function upload(){
   const text = await f.text();
   const res = await fetch('/design', { method:'POST', headers:{'Content-Type':'application/json'}, body:text });
   const json = await res.json();
-  document.getElementById('msg').innerHTML = 'Uploaded! ' + json.screens + ' screen(s) loaded. <a href="/">Go to the dashboard</a>.';
+  document.getElementById('msg').innerHTML = 'Uploaded! ' + json.screens + ' screen(s) loaded. <a href="/dashboard">Go to the dashboard</a>.';
 }
 </script>
 </body></html>`);
@@ -258,7 +315,7 @@ function renderWidget(w, DW, DH) {
 }
 
 // ---------------- Dashboard (scoped to req.authUser) ----------------
-app.get('/', (req, res) => {
+app.get('/dashboard', (req, res) => {
   const u = users[req.authUser];
   if (!u.panelDesign || !u.panelDesign.screens || !u.panelDesign.screens.length) {
     return res.send(genericDashboard(req.authUser));
